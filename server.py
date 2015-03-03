@@ -81,7 +81,9 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             self.server.broadcast(json.dumps(payload))
         else:
             self.connection.sendall(json.dumps(payload))
-
+    
+    def error(self, payload):
+        self.send_payload('server', 'error', 'You did somethin wrong: %s' % payload.get('request'))
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):

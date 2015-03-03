@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import socket, json
+import socket, json, sys
 from messagereceiver import MessageReceiver
 
 class Client:
@@ -28,7 +28,7 @@ class Client:
         self.connection.sendall(json.dumps(payload))
 
 if __name__ == '__main__':
-    client = Client('193.35.52.79', 9000)
+    client = Client(sys.argv[1], 9000)
     while True:
         message = raw_input('> ')
         client.send_payload(message)

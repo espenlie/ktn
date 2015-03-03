@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import SocketServer, re, time, json
+import SocketServer, re, time, json, sys
 from random import randint
 
 class ClientHandler(SocketServer.BaseRequestHandler):
@@ -96,7 +96,7 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
             client.sendall(message)
 
 if __name__ == "__main__":
-    HOST, PORT = '193.35.52.79', 9000
+    HOST, PORT = sys.argv[1], 9000
     print 'Server running...'
     server = ThreadedTCPServer((HOST, PORT), ClientHandler)
     server.serve_forever()

@@ -20,7 +20,7 @@ class Client:
 
     def receive_message(self, message):
         payload = json.loads(message)
-        print "%s: %s <\033[1;31;40m%s\033[0m> %s" % (payload.get('timestamp'), payload.get('response'), payload.get('sender'), payload.get('content'))
+        print "%s: %s <%s> %s" % (payload.get('timestamp'), payload.get('response'), payload.get('sender'), payload.get('content'))
 
     def send_payload(self, data):
         s = data.split(' ', 1)

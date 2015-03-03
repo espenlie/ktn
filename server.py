@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import SocketServer, re, time, json
+from random import randint
 
 class ClientHandler(SocketServer.BaseRequestHandler):
     def handle(self):
@@ -31,9 +32,10 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
     def login(self, payload):
         username = re.sub('[^0-9a-zA-Z]+', '*', payload.get('content'))
+        nick_colors = ['\033[0;30m','\033[1;31m', '\033[0;32m','\033[0;33m','\033[0;34m','\033[0;35m','\033[0;36m','\033[0;37m'] 
         while username in self.server.clients.values():
             username += '*'
-        self.server.clients[self.connection] = username
+        self.server.clients[self.connection] = nick_colors[randint(0, 8)] + username + '\033[0m'
         self.send_payload('server', 'info', 'Successfully logged in as %s' % username)
         msg_string = '\n'
         if self.server.messages:
@@ -116,4 +118,5 @@ if __name__ == "__main__":
     # Set up and initiate the TCP server
     server = ThreadedTCPServer((HOST, PORT), ClientHandler)
     server.serve_forever()
+
 

@@ -11,7 +11,6 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         print "New client connected @ %s %s" % (self.ip, self.port)
         while True:
             received_string = self.connection.recv(4096).strip()
-            print received_string
             if received_string:
                 payload = json.loads(received_string)
                 request = payload.get('request')
@@ -37,7 +36,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         nick_colors = ['\033[0;30m','\033[1;31m', '\033[0;32m','\033[0;33m','\033[0;34m','\033[0;35m','\033[0;36m','\033[0;37m'] 
         username = nick_colors[randint(0, 7)] + username
         self.server.clients[self.connection] =  username
-        self.send_payload('server', 'info', 'Successfully logged in as %s' % username)
+        self.send_payload('server', 'info', 'Successfully logged in as %s' % username+'\033[0m')
         msg_string = '\n'
         if self.server.messages:
             for payload in self.server.messages:
@@ -52,7 +51,6 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
     def logout(self, payload):
         if self.logged_in():
-            username = self.server.clients[self.connection]
             self.send_payload('server', 'info', 'Successfully logged out')
             del self.server.clients[self.connection]
 
@@ -60,12 +58,12 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         if self.logged_in():
             username = self.server.clients[self.connection]
             msg = payload.get('content')
-            self.send_payload(username+'\003[0m', 'message', msg)
+            self.send_payload(username+'\033[0m', 'message', msg)
 
     def names(self, payload):
         if self.logged_in():
             names = self.server.clients.values()
-            self.send_payload('server', 'info', ', '.join(names))
+            self.send_payload('server', 'info', '\033[0m, '.join(names)+'\033[0m')
 
     def help(self, payload):
         help_string = '\nlogin <username> - log in with the given username\nlogout - log out\nmsg <message> - send message\nnames - list users in chat\nhelp - view help text'

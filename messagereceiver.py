@@ -4,6 +4,7 @@ from threading import Thread
 class MessageReceiver(Thread):
     def __init__(self, client):
         self.client = client
+        self.daemon = True
         super(MessageReceiver, self).__init__()
 
     def run(self):

@@ -3,7 +3,6 @@ from threading import Thread
 
 class MessageReceiver(Thread):
     def __init__(self, client):
-#       self.daemon = True
         self.client = client
         super(MessageReceiver, self).__init__()
 
@@ -11,4 +10,4 @@ class MessageReceiver(Thread):
         while True:
             data = self.client.connection.recv(1024).strip()
             if data:
-                self.client.receive_message(data)
+               self.client.receive_message(data)

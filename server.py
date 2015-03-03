@@ -1,31 +1,92 @@
 # -*- coding: utf-8 -*-
-import SocketServer
+import SocketServer, re, time, json
 
 
 class ClientHandler(SocketServer.BaseRequestHandler):
-    """
-    This is the ClientHandler class. Everytime a new client connects to the
-    server, a new ClientHandler object will be created. This class represents
-    only connected clients, and not the server itself. If you want to write
-    logic for the server, you must write it outside this class
-    """
-
     def handle(self):
-        """
-        This method handles the connection between a client and the server.
-        """
         self.ip = self.client_address[0]
         self.port = self.client_address[1]
         self.connection = self.request
-
+    
+        print "New client connected @ %s %s" % (self.ip, self.port)
         # Loop that listens for messages from the client
         while True:
-            received_string = self.connection.recv(4096)
-            
-            # TODO: Add handling of received payload from client
+            received_string = self.connection.recv(4096).strip()
+            if received_string:
+                payload = json.loads(received_string)
+                request = payload.get('request')
+                if request == 'login':
+                    self.login(payload)
+                elif request == 'logout':
+                    self.logout(payload)
+                elif request == 'msg':
+                    self.msg(payload)
+                elif request == 'names':
+                    self.names(payload)
+                elif request == 'help':
+                    self.help(payload)
+                else:
+                    self.error(payload)
+            else:
+                break
+
+    def login(self, payload):
+        username = re.sub('[^0-9a-zA-Z]+', '*', payload.get('content'))
+        while username in self.server.clients.values():
+            username += '*'
+        self.server.clients[self.connection] = username
+        self.send_payload('server', 'info', 'Successfully logged in as %s' % username)
+        for message in self.server.messages:
+            msg_string = "%s: <%s> %s %s\n" % (payload.get('timestamp'), payload.get('sender'), payload.get('response'), payload.get('content'))
+            self.connection.sendall(json.dumps(payload))
+            time.sleep(1)
+
+    def logged_in(self):
+        if not self.connection in self.server.clients:
+            self.send_payload('server', 'error', 'Not logged in. Type help for info.')
+            return False
+        else:
+            return True
+
+
+    def logout(self, payload):
+        if self.logged_in():
+            username = self.server.clients[self.connection]
+            self.send_payload('server', 'info', 'Successfully logged out')
+            del self.server.clients[self.connection]
+
+    def msg(self, payload):
+        if self.logged_in():
+            username = self.server.clients[self.connection]
+            msg = payload.get('content')
+            self.send_payload(username, 'message', msg)
+
+    def names(self, payload):
+        if self.logged_in():
+            names = self.server.clients.values()
+            self.send_payload('server', 'info', ', '.join(names))
+
+    def help(self, payload):
+        help_string = 'login <username> - log in with the given username\nlogout - log out\nmsg <message> - send message\nnames - list users in chat\nhelp - view help text'
+        self.send_payload('server', 'info', help_string)
+        
+
+    def send_payload(self, sender, response, content):
+        payload = {'timestamp'  : time.strftime('%Y-%m-%d %H:%M:%S'),
+                    'sender'    : sender,
+                    'response'  : response,
+                    'content'   : content
+        }
+        if response == 'message':
+            self.server.messages.append(payload)
+            self.server.broadcast(json.dumps(payload))
+        else:
+            self.connection.sendall(json.dumps(payload))
+
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+
     """
     This class is present so that each client connected will be ran as a own
     thread. In that way, all clients will be served by the server.
@@ -33,6 +94,12 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     No alterations is necessary
     """
     allow_reuse_address = True
+    messages = []
+    clients = {}
+
+    def broadcast(self, message):
+        for client in self.clients:
+            client.sendall(message)
 
 if __name__ == "__main__":
     """
@@ -41,7 +108,7 @@ if __name__ == "__main__":
 
     No alterations is necessary
     """
-    HOST, PORT = 'localhost', 9998
+    HOST, PORT = 'localhost', 1337
     print 'Server running...'
 
     # Set up and initiate the TCP server

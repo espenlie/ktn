@@ -33,6 +33,8 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         username = re.sub('[^0-9a-zA-Z]+', '*', payload.get('content'))
         while username in self.server.clients.values():
             username += '_'
+        nick_colors = ['\033[0;30m','\033[1;31m', '\033[0;32m','\033[0;33m','\033[0;34m','\033[0;35m','\033[0;36m','\033[0;37m'] 
+        username = nick_colors[randint(0, 7)] + username
         self.server.clients[self.connection] =  username
         self.send_payload('server', 'info', 'Successfully logged in as %s' % username)
         msg_string = '\n'
@@ -57,7 +59,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         if self.logged_in():
             username = self.server.clients[self.connection]
             msg = payload.get('content')
-            self.send_payload(username, 'message', msg)
+            self.send_payload(username+'\003[0m', 'message', msg)
 
     def names(self, payload):
         if self.logged_in():

@@ -21,8 +21,7 @@ class Client:
 
     def receive_message(self, message):
         payload = json.loads(message)
-        nick_colors = ['\033[0;30m','\033[1;31m', '\033[0;32m','\033[0;33m','\033[0;34m','\033[0;35m','\033[0;36m','\033[0;37m'] 
-        print "%s: %s <%s%s\033[0m> %s" % (payload.get('timestamp'), payload.get('response'), nick_colors[randint(0, 7)], payload.get('sender'), payload.get('content'))
+        print "%s: %s <%s> %s" % (payload.get('timestamp'), payload.get('response'), payload.get('sender'), payload.get('content'))
 
     def send_payload(self, data):
         s = data.split(' ', 1)

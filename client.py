@@ -30,7 +30,7 @@ class Client:
 if __name__ == '__main__':
     client = Client(sys.argv[1], 9000)
     while True:
-        message = raw_input('> ')
+        message = raw_input('')
         client.send_payload(message)
         if message == 'logout':
             break

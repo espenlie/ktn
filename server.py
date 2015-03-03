@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import SocketServer, re, time, json, sys
+from random import randint
 
 class ClientHandler(SocketServer.BaseRequestHandler):
     def handle(self):

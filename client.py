@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import socket, json, sys
 from messagereceiver import MessageReceiver
-from random import randint
 
 class Client:
     def __init__(self, host, server_port):

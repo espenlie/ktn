@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import SocketServer, re, time, json
 
-
 class ClientHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         self.ip = self.client_address[0]
@@ -9,7 +8,6 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         self.connection = self.request
     
         print "New client connected @ %s %s" % (self.ip, self.port)
-        # Loop that listens for messages from the client
         while True:
             received_string = self.connection.recv(4096).strip()
             print received_string
@@ -103,6 +101,8 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
         for client in self.clients:
             client.sendall(message)
 
+
+
 if __name__ == "__main__":
     """
     This is the main method and is executed when you type "python Server.py"
@@ -116,3 +116,4 @@ if __name__ == "__main__":
     # Set up and initiate the TCP server
     server = ThreadedTCPServer((HOST, PORT), ClientHandler)
     server.serve_forever()
+

@@ -28,7 +28,7 @@ class Client:
         self.connection.sendall(json.dumps(payload))
 
 if __name__ == '__main__':
-    client = Client('localhost', 1337)
+    client = Client('hoftun.mg.am', 1337)
     while True:
         message = raw_input('> ')
         client.send_payload(message)

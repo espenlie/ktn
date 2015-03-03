@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
     No alterations is necessary
     """
-    HOST, PORT = 'hoftun.mg.am', 1337
+    HOST, PORT = '193.35.52.79', 9000
     print 'Server running...'
 
     # Set up and initiate the TCP server

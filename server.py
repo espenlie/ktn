@@ -12,6 +12,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         # Loop that listens for messages from the client
         while True:
             received_string = self.connection.recv(4096).strip()
+            print received_string
             if received_string:
                 payload = json.loads(received_string)
                 request = payload.get('request')

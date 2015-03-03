@@ -36,18 +36,17 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             username += '*'
         self.server.clients[self.connection] = username
         self.send_payload('server', 'info', 'Successfully logged in as %s' % username)
-        for message in self.server.messages:
-            msg_string = "%s: <%s> %s %s\n" % (payload.get('timestamp'), payload.get('sender'), payload.get('response'), payload.get('content'))
-            self.connection.sendall(json.dumps(payload))
-            time.sleep(1)
-
+        msg_string = '\n'
+        if self.server.messages:
+            for payload in self.server.messages:
+                msg_string += "%s: <%s> %s %s\n" % (payload.get('timestamp'), payload.get('sender'), payload.get('response'), payload.get('content'))
+            self.send_payload('server', 'info', msg_string)
     def logged_in(self):
         if not self.connection in self.server.clients:
             self.send_payload('server', 'error', 'Not logged in. Type help for info.')
             return False
         else:
             return True
-
 
     def logout(self, payload):
         if self.logged_in():
@@ -67,7 +66,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             self.send_payload('server', 'info', ', '.join(names))
 
     def help(self, payload):
-        help_string = 'login <username> - log in with the given username\nlogout - log out\nmsg <message> - send message\nnames - list users in chat\nhelp - view help text'
+        help_string = '\nlogin <username> - log in with the given username\nlogout - log out\nmsg <message> - send message\nnames - list users in chat\nhelp - view help text'
         self.send_payload('server', 'info', help_string)
         
 

@@ -12,7 +12,6 @@ class Client:
     def run(self):
         self.connection.connect((self.host, self.server_port))
         recv_thread = MessageReceiver(self)
-#       recv_thread.deamon = True
         recv_thread.start()
         print "Client recieve thread %s" % recv_thread.name
 

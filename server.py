@@ -90,12 +90,13 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     allow_reuse_address = True
     messages = []
     clients = {}
+    deads = []
     def broadcast(self, message):
         for client in self.clients:
             try:
                 client.sendall(message)
             except:
-                continue
+                deads.append(client)
         for dead_conn in deads:
             del self.clients[dead_conn]
 

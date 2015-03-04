@@ -41,7 +41,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         if self.server.messages:
             for payload in self.server.messages:
                 msg_string += "%s: <%s> %s %s\n" % (payload.get('timestamp'), payload.get('sender'), payload.get('response'), payload.get('content'))
-                self.send_payload('server', 'info', msg_string)
+            self.send_payload('server', 'info', msg_string)
     def logged_in(self):
         if not self.connection in self.server.clients:
             self.send_payload('server', 'error', 'Not logged in. Type help for info.')

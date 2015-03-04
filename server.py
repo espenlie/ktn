@@ -96,8 +96,8 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
             try:
                 client.sendall(message)
             except:
-                deads.append(client)
-        for dead_conn in deads:
+                self.deads.append(client)
+        for dead_conn in self.deads:
             del self.clients[dead_conn]
 
 if __name__ == "__main__":

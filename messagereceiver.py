@@ -9,6 +9,6 @@ class MessageReceiver(Thread):
 
     def run(self):
         while True:
-            data = self.client.connection.recv(65536).strip()
+            data = self.client.connection.recv(1048576).strip()
             if data:
                self.client.receive_message(data)

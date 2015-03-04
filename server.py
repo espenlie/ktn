@@ -95,7 +95,9 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
             try:
                 client.sendall(message)
             except:
-                del self.clients[client]
+                continue
+        for dead_conn in deads:
+            del self.clients[dead_conn]
 
 if __name__ == "__main__":
     HOST, PORT = sys.argv[1], 9000

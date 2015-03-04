@@ -12,7 +12,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
     
         print "New client connected @ %s %s" % (self.ip, self.port)
         while True:
-            received_string = self.connection.recv(65536).strip()
+            received_string = self.connection.recv(1048576).strip()
             if received_string:
                 payload = json.loads(received_string)
                 request = payload.get('request')

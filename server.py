@@ -92,7 +92,10 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     clients = {}
     def broadcast(self, message):
         for client in self.clients:
-            client.sendall(message)
+            try:
+                client.sendall(message)
+            except:
+                del clients[client]
 
 if __name__ == "__main__":
     HOST, PORT = sys.argv[1], 9000
